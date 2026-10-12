@@ -1,5 +1,5 @@
 // Сервис-воркер: всё приложение и компилятор отдаются из кэша, интернет нужен только один раз.
-const SHELL_CACHE = 'cpp-trainer-shell-v1';
+const SHELL_CACHE = 'cpp-trainer-shell-v2';
 const VENDOR_CACHE = 'cpp-trainer-vendor-v1'; // компилятор живёт отдельно, чтобы обновления приложения его не перекачивали
 const SHELL = [
   './', 'index.html', 'style.css', 'app.js', 'problems.js', 'harness.js', 'compiler-worker.js', 'run-worker.js',

@@ -139,30 +139,41 @@ a { color: var(--accent); }
 .ed-tools { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
 .ed-tools .spacer { flex: 1; }
 .editor {
-  position: relative; display: flex; background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px;
-  overflow: auto; font: var(--code-size)/1.5 var(--mono); min-height: 300px; -webkit-overflow-scrolling: touch;
+  --gw: 2ch;
+  position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  font: var(--code-size)/1.5 var(--mono);
 }
-.editor .gutter {
-  position: sticky; left: 0; z-index: 2; flex: none; padding: 12px 8px 12px 10px; text-align: right; color: var(--gutter);
-  background: var(--code-bg); border-right: 1px solid var(--border); user-select: none; -webkit-user-select: none; white-space: pre;
+.editor .area { position: relative; min-height: 300px; }
+.editor .area::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: calc(var(--gw) + 18px);
+  border-right: 1px solid var(--border); pointer-events: none;
 }
-.editor .gutter .err { color: var(--bad); font-weight: 700; }
-.editor .area { position: relative; flex: 1; min-width: 0; }
+/* pre и textarea обязаны совпадать до пикселя: одинаковые шрифт, отступы и правила переноса */
 .editor pre.hl, .editor textarea {
-  margin: 0; padding: 12px 14px 12px 12px; border: 0; font: inherit; line-height: inherit; white-space: pre; tab-size: 4;
-  letter-spacing: 0; word-spacing: 0; overflow: hidden;
+  box-sizing: border-box; margin: 0; border: 0; padding: 12px 12px 12px calc(var(--gw) + 30px);
+  font: inherit; line-height: inherit; letter-spacing: 0; word-spacing: 0; tab-size: 4; -moz-tab-size: 4;
+  white-space: pre-wrap; word-break: break-all; overflow-wrap: anywhere; text-indent: 0;
+  font-variant-ligatures: none; font-kerning: none; text-rendering: optimizeSpeed;
 }
-.editor pre.hl { position: absolute; inset: 0; pointer-events: none; color: var(--text); min-width: 100%; }
+.editor pre.hl { position: relative; pointer-events: none; color: var(--text); min-height: 300px; counter-reset: line; }
+.editor pre.hl .ln { display: block; position: relative; min-height: 1.5em; counter-increment: line; }
+.editor pre.hl .ln::before {
+  content: counter(line); position: absolute; left: calc(-1 * (var(--gw) + 22px)); width: var(--gw); text-align: right;
+  color: var(--gutter); font-style: normal;
+}
+.editor pre.hl .ln.err::before { color: var(--bad); font-weight: 700; }
+.editor pre.hl .ln.err { background: var(--bad-bg); }
 .editor textarea {
-  position: relative; display: block; width: 100%; min-height: 300px; resize: none; background: transparent; color: transparent;
-  caret-color: var(--text); outline: none; -webkit-text-fill-color: transparent; overflow-wrap: normal;
+  position: absolute; inset: 0; width: 100%; height: 100%; resize: none; overflow: hidden;
+  background: transparent; color: transparent; -webkit-text-fill-color: transparent; caret-color: var(--text);
+  outline: none; -webkit-appearance: none; appearance: none; border-radius: 0;
 }
 .editor textarea::selection { background: var(--sel); -webkit-text-fill-color: transparent; }
 .tk-kw { color: var(--hl-kw); }
 .tk-ty { color: var(--hl-type); }
 .tk-st { color: var(--hl-str); }
 .tk-nu { color: var(--hl-num); }
-.tk-co { color: var(--hl-com); font-style: italic; }
+.tk-co { color: var(--hl-com); }
 .tk-pp { color: var(--hl-pre); }
 .tk-fn { color: var(--hl-fn); }
 

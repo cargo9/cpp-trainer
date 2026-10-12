@@ -1,7 +1,7 @@
 /* C++ Тренажёр — интерфейс, редактор, офлайн-загрузка и запуск */
 (() => {
   'use strict';
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
   const VENDOR_CACHE = 'cpp-trainer-vendor-v1';
   // Файлы компилятора (размеры в байтах нужны для полосы загрузки)
   const VENDOR = [
@@ -145,7 +145,7 @@
     while ((m = TOKEN_RE.exec(src))) {
       out += esc(src.slice(last, m.index));
       const t = m[0];
-      if (m[1]) out += `<span class="tk-co">${esc(t)}</span>`;
+      if (m[1]) out += esc(t).split('\n').map((x) => `<span class="tk-co">${x}</span>`).join('\n');
       else if (m[2]) out += `<span class="tk-st">${esc(t)}</span>`;
       else if (m[3]) {
         const mm = t.match(/^(\s*#\s*\w+)(.*)$/);
@@ -164,20 +164,18 @@
   // ───────── Редактор ─────────
   let activeEditor = null;
   function createEditor(host, value, onChange) {
-    host.innerHTML = `<div class="editor"><div class="gutter"></div><div class="area"><pre class="hl" aria-hidden="true"></pre>
-      <textarea spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" aria-label="Код"></textarea></div></div>`;
-    const ta = $('textarea', host), pre = $('pre', host), gutter = $('.gutter', host);
+    host.innerHTML = `<div class="editor"><div class="area"><pre class="hl" aria-hidden="true"></pre>
+      <textarea spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Код"></textarea></div></div>`;
+    const ta = $('textarea', host), pre = $('pre', host);
     let errLines = new Set();
     ta.value = value;
+    // Подсветка лежит под прозрачным textarea. Оба переносят длинные строки по одним правилам,
+    // а высоту задаёт pre, поэтому текст и курсор не разъезжаются при любой длине строки.
     const render = () => {
-      pre.innerHTML = highlight(ta.value) + '\n ';
-      const n = ta.value.split('\n').length;
-      let g = '';
-      for (let i = 1; i <= n; i++) g += errLines.has(i) ? `<span class="err">${i}</span>\n` : i + '\n';
-      gutter.innerHTML = g;
-      ta.style.height = 'auto'; ta.style.width = '100%';
-      ta.style.height = ta.scrollHeight + 'px';
-      ta.style.width = Math.max(ta.scrollWidth, ta.parentElement.clientWidth) + 'px';
+      const lines = highlight(ta.value).split('\n');
+      pre.innerHTML = lines.map((l, i) => `<span class="ln${errLines.has(i + 1) ? ' err' : ''}">${l}</span>`).join('');
+      const digits = String(lines.length).length;
+      host.firstElementChild.style.setProperty('--gw', Math.max(2, digits) + 'ch');
     };
     let tm;
     const changed = () => { render(); clearTimeout(tm); tm = setTimeout(() => onChange && onChange(ta.value), 300); };
@@ -228,7 +226,6 @@
     });
     ta.addEventListener('focus', () => { activeEditor = api; keybar.show(); });
     ta.addEventListener('blur', () => { setTimeout(() => { if (document.activeElement !== ta) keybar.hide(); }, 150); });
-    window.addEventListener('resize', render);
 
     const api = {
       ta, insert, render,
@@ -239,9 +236,8 @@
         const lines = ta.value.split('\n'); let pos = 0;
         for (let i = 0; i < n - 1 && i < lines.length; i++) pos += lines[i].length + 1;
         ta.focus(); ta.setSelectionRange(pos, pos + (lines[n - 1] || '').length);
-        const lh = parseFloat(getComputedStyle(ta).lineHeight) || 21;
-        const top = ta.getBoundingClientRect().top + window.scrollY + (n - 3) * lh;
-        window.scrollTo({ top: Math.max(0, top - 80), behavior: 'smooth' });
+        const el = pre.children[n - 1];
+        if (el) window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - 120), behavior: 'smooth' });
       },
       moveCursor(d) { const p = Math.max(0, Math.min(ta.value.length, ta.selectionStart + d)); ta.focus(); ta.setSelectionRange(p, p); },
     };
