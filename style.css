@@ -244,3 +244,10 @@ textarea.stdin { width: 100%; min-height: 80px; border: 1px solid var(--border);
   .split .left { position: sticky; top: 70px; max-height: calc(100vh - 86px); overflow: auto; padding-right: 4px; }
   .split .pane-res { margin-top: 14px; }
 }
+.nb { background: var(--accent, #2f81f7); color: #fff; border-radius: 8px; padding: 0 6px; font-size: 11px; margin-left: 4px; }
+.learn details.concept { border-top: 1px solid var(--border); padding: 8px 0; }
+.learn details.concept:first-of-type { border-top: 0; }
+.learn summary { cursor: pointer; font-weight: 600; }
+.learn pre.sol { margin: 8px 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; }
+.learn p { margin: 6px 0; }
+.learn .muted-s { color: var(--muted); font-size: 14px; margin-top: 14px; }

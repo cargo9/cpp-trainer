@@ -1,7 +1,7 @@
 /* C++ Тренажёр — интерфейс, редактор, офлайн-загрузка и запуск */
 (() => {
   'use strict';
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.0.2';
   const VENDOR_CACHE = 'cpp-trainer-vendor-v1';
   // Файлы компилятора (размеры в байтах нужны для полосы загрузки)
   const VENDOR = [
@@ -20,6 +20,16 @@
 
   const $ = (sel, el = document) => el.querySelector(sel);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // Понятие считается новым в первой задаче (по порядку), где оно встречается в LEARN
+  const firstSeen = {};
+  PROBLEMS.forEach((p) => (LEARN[p.id] || []).forEach((c) => { if (!(c in firstSeen)) firstSeen[c] = p.id; }));
+  const learnOf = (p) => {
+    const fresh = (LEARN[p.id] || []).filter((c) => firstSeen[c] === p.id);
+    const review = [...new Set([...(LEARN[p.id] || []).filter((c) => firstSeen[c] !== p.id), ...(REVIEW[p.id] || [])])];
+    return { fresh, review };
+  };
+  const unesc = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  const conceptHTML = (id) => CONCEPTS[id].h.replace(/<pre>([\s\S]*?)<\/pre>/g, (_, code) => `<pre class="sol">${highlight(unesc(code))}</pre>`);
   const byId = Object.fromEntries(PROBLEMS.map((p, i) => [p.id, { ...p, idx: i }]));
   const levelOf = (id) => LEVELS.find((l) => l.id === id);
 
@@ -329,7 +339,7 @@
       <div class="wrap">
         <div class="hero">
           <h2>От «Hello» до Hard</h2>
-          <p>${PROBLEMS.length} задач с автотестами, 5 уровней сложности. Пиши код и жми «Проверить».</p>
+          <p>${PROBLEMS.length} задач с автотестами, ${LEVELS.length} уровней сложности. Пиши код и жми «Проверить».</p>
           <div class="progress"><div style="width:${(solved / PROBLEMS.length) * 100}%"></div></div>
           <div class="stats"><span>Решено ${solved} из ${PROBLEMS.length}</span>${next ? `<a href="#/p/${next.id}">Продолжить: ${esc(next.title)} →</a>` : '<span>Все задачи решены 🏆</span>'}</div>
         </div>
@@ -391,10 +401,11 @@
             <p style="color:var(--muted);font-size:14px">Тестов: ${p.tests.length}. Функцию <code>main()</code> писать не нужно, её добавит проверка.</p>
             <div class="reveal">
               <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn small" id="learnBtn">📘 Что нужно знать${learnOf(p).fresh.length ? ` <span class="nb">${learnOf(p).fresh.length} нов.</span>` : ''}</button>
                 <button class="btn small" id="hintBtn">💡 Подсказка</button>
                 <button class="btn small" id="solBtn">🔑 Решение</button>
               </div>
-              <div id="hintBox"></div><div id="solBox"></div>
+              <div id="learnBox"></div><div id="hintBox"></div><div id="solBox"></div>
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:22px;gap:8px">
               ${idx > 0 ? `<a class="btn small" href="#/p/${PROBLEMS[idx - 1].id}">← Назад</a>` : '<span></span>'}
@@ -427,6 +438,17 @@
     app.querySelectorAll('.tabs button').forEach((b) => (b.onclick = () => setTab(b.dataset.tab)));
     setTab(tab);
 
+    $('#learnBtn').onclick = () => {
+      const box = $('#learnBox');
+      if (box.innerHTML) { box.innerHTML = ''; return; }
+      const { fresh, review } = learnOf(p);
+      const card = (id, open) => `<details class="concept"${open ? ' open' : ''}><summary>${esc(CONCEPTS[id].t)}</summary>${conceptHTML(id)}</details>`;
+      box.innerHTML = `<div class="box learn">
+        ${fresh.length ? `<b>Новое в этой задаче</b>${fresh.map((c) => card(c, true)).join('')}`
+          : '<p>Новых конструкций здесь нет: всё нужное ты уже встречал. Подумай, как собрать решение из знакомых кусочков.</p>'}
+        ${review.length ? `<p class="muted-s">Пригодится из пройденного (нажми, чтобы освежить):</p>${review.map((c) => card(c, false)).join('')}` : ''}
+      </div>`;
+    };
     $('#hintBtn').onclick = () => { $('#hintBox').innerHTML = `<div class="box">💡 ${esc(p.hint)}</div>`; };
     $('#solBtn').onclick = () => {
       if (!$('#solBox').innerHTML && !confirm('Показать эталонное решение? Сначала попробуй сам, так лучше запоминается.')) return;

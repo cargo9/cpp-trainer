@@ -36,7 +36,8 @@ std::vector<int> treeVec(TreeNode* r) {
 `;
 
   const LEVELS = [
-    { id: 1, name: 'Разминка', color: '#3fb950', about: 'Функции, условия, циклы. Разогреваемся.' },
+    { id: 0, name: 'Основы', color: '#a371f7', about: 'Самое начало: функция, return, арифметика, if/else. Жми «📘 Что нужно знать», если не знаешь, как сделать.' },
+    { id: 1, name: 'Разминка', color: '#3fb950', about: 'Циклы, строки и первые массивы (vector).' },
     { id: 2, name: 'Лёгкий', color: '#58a6ff', about: 'Массивы, строки, хеш-таблицы, первые структуры.' },
     { id: 3, name: 'Средний', color: '#d29922', about: 'Два указателя, окна, графы, DP, деревья.' },
     { id: 4, name: 'Сложный', color: '#f0883e', about: 'Классика собеседований: LRU, DP, топосорт, Дейкстра.' },
@@ -48,7 +49,7 @@ std::vector<int> treeVec(TreeNode* r) {
   const P = [
     // ───────────── 1. Разминка ─────────────
     {
-      id: 'sum', lvl: 1, title: 'Сумма двух чисел', fn: 'sum', args: ['int', 'int'],
+      id: 'sum', lvl: 0, title: 'Сумма двух чисел', fn: 'sum', args: ['int', 'int'],
       desc: `<p>Напиши функцию, которая возвращает сумму двух целых чисел <code>a</code> и <code>b</code>.</p>
 <pre>sum(2, 3) → 5
 sum(-4, 10) → 6</pre>`,
@@ -63,7 +64,7 @@ sum(-4, 10) → 6</pre>`,
 }`,
     },
     {
-      id: 'max3', lvl: 1, title: 'Максимум из трёх', fn: 'maxOfThree', args: ['int', 'int', 'int'],
+      id: 'max3', lvl: 0, title: 'Максимум из трёх', fn: 'maxOfThree', args: ['int', 'int', 'int'],
       desc: `<p>Верни наибольшее из трёх чисел. Попробуй без <code>std::max</code>, только через <code>if</code>.</p>
 <pre>maxOfThree(1, 2, 3) → 3
 maxOfThree(-3, -7, -1) → -1</pre>`,
@@ -80,7 +81,7 @@ maxOfThree(-3, -7, -1) → -1</pre>`,
 }`,
     },
     {
-      id: 'even', lvl: 1, title: 'Чётное или нет', fn: 'isEven', args: ['int'],
+      id: 'even', lvl: 0, title: 'Чётное или нет', fn: 'isEven', args: ['int'],
       desc: `<p>Верни <code>true</code>, если число чётное, иначе <code>false</code>. Учти отрицательные числа.</p>
 <pre>isEven(4) → true
 isEven(-5) → false</pre>`,
@@ -1234,7 +1235,379 @@ public:
     }
 };`,
     },
+    // ───────── Новые задачи для новичков (уровни 0 и 1) ─────────
+    {
+      id: 'square', lvl: 0, title: 'Квадрат числа', fn: 'square', args: ['int'],
+      desc: `<p>Верни квадрат числа <code>x</code>, то есть <code>x · x</code>.</p>
+<pre>square(3) → 9
+square(-4) → 16</pre>`,
+      starter: `int square(int x) {
+    // умножь x на само себя и верни результат
+    return 0;
+}`,
+      tests: [[['3'], '9'], [['-4'], '16'], [['0'], '0'], [['12'], '144'], [['1000'], '1000000']],
+      hint: 'Умножение в C++ записывается звёздочкой: x * x.',
+      sol: `int square(int x) {
+    return x * x;
+}`,
+    },
+    {
+      id: 'minutes', lvl: 0, title: 'Часы в минуты', fn: 'toMinutes', args: ['int', 'int'],
+      desc: `<p>Дано время: <code>hours</code> часов и <code>minutes</code> минут. Верни, сколько это всего минут.</p>
+<pre>toMinutes(1, 30) → 90
+toMinutes(2, 0) → 120</pre>`,
+      starter: `int toMinutes(int hours, int minutes) {
+    return 0;
+}`,
+      tests: [[['1', '30'], '90'], [['0', '45'], '45'], [['2', '0'], '120'], [['24', '0'], '1440'], [['3', '15'], '195']],
+      hint: 'В одном часе 60 минут: hours * 60 + minutes.',
+      sol: `int toMinutes(int hours, int minutes) {
+    return hours * 60 + minutes;
+}`,
+    },
+    {
+      id: 'lastdigit', lvl: 0, title: 'Последняя цифра', fn: 'lastDigit', args: ['int'],
+      desc: `<p>Дано неотрицательное число <code>n</code>. Верни его последнюю цифру.</p>
+<pre>lastDigit(123) → 3
+lastDigit(50) → 0</pre>`,
+      starter: `int lastDigit(int n) {
+    return 0;
+}`,
+      tests: [[['123'], '3'], [['7'], '7'], [['50'], '0'], [['98765'], '5'], [['0'], '0']],
+      hint: 'Остаток от деления на 10 и есть последняя цифра: n % 10.',
+      sol: `int lastDigit(int n) {
+    return n % 10;
+}`,
+    },
+    {
+      id: 'average', lvl: 0, title: 'Среднее трёх чисел', fn: 'average', args: ['int', 'int', 'int'], cmp: 'near',
+      desc: `<p>Верни среднее арифметическое трёх целых чисел. Ответ может быть дробным, поэтому функция возвращает <code>double</code>.</p>
+<pre>average(1, 2, 3) → 2
+average(1, 2, 2) → 1.666667</pre>
+<p>Осторожно с ловушкой: <code>5 / 3</code> в C++ даёт <code>1</code>, а не 1.67.</p>`,
+      starter: `double average(int a, int b, int c) {
+    return 0;
+}`,
+      tests: [[['1', '2', '3'], '2.0'], [['1', '2', '2'], '5.0 / 3'], [['10', '0', '5'], '5.0'], [['-3', '3', '1'], '1.0 / 3'], [['7', '7', '8'], '22.0 / 3']],
+      hint: 'Сумма делится на 3.0 (с точкой), а не на 3: (a + b + c) / 3.0.',
+      sol: `double average(int a, int b, int c) {
+    return (a + b + c) / 3.0;
+}`,
+    },
+    {
+      id: 'celsius', lvl: 0, title: 'Цельсий в Фаренгейт', fn: 'toFahrenheit', args: ['double'], cmp: 'near',
+      desc: `<p>Переведи температуру из градусов Цельсия в Фаренгейты по формуле <code>F = C · 9 / 5 + 32</code>.</p>
+<pre>toFahrenheit(0) → 32
+toFahrenheit(100) → 212</pre>`,
+      starter: `double toFahrenheit(double c) {
+    return 0;
+}`,
+      tests: [[['0'], '32.0'], [['100'], '212.0'], [['-40'], '-40.0'], [['36.6'], '97.88'], [['25'], '77.0']],
+      hint: 'Просто перепиши формулу: return c * 9 / 5 + 32; Так как c уже double, деление будет дробным.',
+      sol: `double toFahrenheit(double c) {
+    return c * 9 / 5 + 32;
+}`,
+    },
+    {
+      id: 'absval', lvl: 0, title: 'Модуль числа', fn: 'absValue', args: ['int'],
+      desc: `<p>Верни модуль числа (число без знака минус). Не используй готовую <code>abs</code>, сделай через <code>if</code>.</p>
+<pre>absValue(-5) → 5
+absValue(7) → 7</pre>`,
+      starter: `int absValue(int n) {
+    return n;
+}`,
+      tests: [[['-5'], '5'], [['7'], '7'], [['0'], '0'], [['-100'], '100'], [['42'], '42']],
+      hint: 'Если n < 0, верни -n. Иначе верни n.',
+      sol: `int absValue(int n) {
+    if (n < 0) {
+        return -n;
+    }
+    return n;
+}`,
+    },
+    {
+      id: 'sign', lvl: 0, title: 'Знак числа', fn: 'sign', args: ['int'],
+      desc: `<p>Верни <code>-1</code>, если число отрицательное, <code>0</code>, если оно равно нулю, и <code>1</code>, если положительное.</p>
+<pre>sign(-8) → -1
+sign(0) → 0
+sign(15) → 1</pre>`,
+      starter: `int sign(int n) {
+    return 0;
+}`,
+      tests: [[['-8'], '-1'], [['0'], '0'], [['15'], '1'], [['-1'], '-1'], [['1000000'], '1']],
+      hint: 'Три случая: if (n < 0) ... else if (n == 0) ... else ...',
+      sol: `int sign(int n) {
+    if (n < 0) return -1;
+    else if (n == 0) return 0;
+    else return 1;
+}`,
+    },
+    {
+      id: 'grade', lvl: 0, title: 'Оценка за тест', fn: 'grade', args: ['int'],
+      desc: `<p>По количеству баллов (0–100) верни букву-оценку: 90 и выше — <code>'A'</code>, 75 и выше — <code>'B'</code>, 60 и выше — <code>'C'</code>, иначе <code>'F'</code>.</p>
+<pre>grade(95) → 'A'
+grade(80) → 'B'
+grade(59) → 'F'</pre>`,
+      starter: `char grade(int score) {
+    return 'F';
+}`,
+      tests: [[['95'], "'A'"], [['90'], "'A'"], [['80'], "'B'"], [['75'], "'B'"], [['60'], "'C'"], [['59'], "'F'"], [['0'], "'F'"]],
+      hint: 'Проверяй сверху вниз: сначала >= 90, потом >= 75, потом >= 60. Буква пишется в одинарных кавычках: \'A\'.',
+      sol: `char grade(int score) {
+    if (score >= 90) return 'A';
+    if (score >= 75) return 'B';
+    if (score >= 60) return 'C';
+    return 'F';
+}`,
+    },
+    {
+      id: 'leap', lvl: 0, title: 'Високосный год', fn: 'isLeap', args: ['int'],
+      desc: `<p>Год високосный, если он делится на 4, но не делится на 100. Исключение: годы, которые делятся на 400, тоже високосные.</p>
+<pre>isLeap(2024) → true
+isLeap(1900) → false
+isLeap(2000) → true</pre>`,
+      starter: `bool isLeap(int year) {
+    return false;
+}`,
+      tests: [[['2024'], 'true'], [['2023'], 'false'], [['1900'], 'false'], [['2000'], 'true'], [['2100'], 'false'], [['1996'], 'true']],
+      hint: 'Одним выражением: (year % 4 == 0 && year % 100 != 0) || year % 400 == 0.',
+      sol: `bool isLeap(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+}`,
+    },
+    {
+      id: 'sumto', lvl: 1, title: 'Сумма от 1 до n', fn: 'sumTo', args: ['int'],
+      desc: `<p>Верни сумму всех чисел от 1 до <code>n</code> включительно. Сделай это циклом.</p>
+<pre>sumTo(5) → 15   // 1+2+3+4+5</pre>`,
+      starter: `int sumTo(int n) {
+    int total = 0;
+    // пройди циклом от 1 до n и прибавляй к total
+    return total;
+}`,
+      tests: [[['1'], '1'], [['5'], '15'], [['10'], '55'], [['100'], '5050'], [['0'], '0']],
+      hint: 'for (int i = 1; i <= n; i++) { total += i; }',
+      sol: `int sumTo(int n) {
+    int total = 0;
+    for (int i = 1; i <= n; i++) {
+        total += i;
+    }
+    return total;
+}`,
+    },
+    {
+      id: 'power', lvl: 1, title: 'Возведение в степень', fn: 'power', args: ['int', 'int'],
+      desc: `<p>Верни <code>a</code> в степени <code>n</code> (n ≥ 0). Сделай циклом, без готовой <code>pow</code>. Результат может быть большим, поэтому тип <code>long long</code>.</p>
+<pre>power(2, 10) → 1024
+power(3, 0) → 1</pre>`,
+      starter: `long long power(int a, int n) {
+    return 0;
+}`,
+      tests: [[['2', '10'], '1024'], [['3', '0'], '1'], [['5', '3'], '125'], [['-2', '3'], '-8'], [['10', '18'], '1000000000000000000']],
+      hint: 'Начни с result = 1 и n раз умножь его на a.',
+      sol: `long long power(int a, int n) {
+    long long result = 1;
+    for (int i = 0; i < n; i++) result *= a;
+    return result;
+}`,
+    },
+    {
+      id: 'divisors', lvl: 1, title: 'Количество делителей', fn: 'countDivisors', args: ['int'],
+      desc: `<p>Сколько у числа <code>n</code> (n ≥ 1) делителей? Делитель — число, на которое <code>n</code> делится без остатка.</p>
+<pre>countDivisors(6) → 4    // 1, 2, 3, 6
+countDivisors(13) → 2   // 1, 13</pre>`,
+      starter: `int countDivisors(int n) {
+    return 0;
+}`,
+      tests: [[['1'], '1'], [['6'], '4'], [['12'], '6'], [['13'], '2'], [['100'], '9']],
+      hint: 'Перебери i от 1 до n и считай те, где n % i == 0.',
+      sol: `int countDivisors(int n) {
+    int cnt = 0;
+    for (int i = 1; i <= n; i++) {
+        if (n % i == 0) cnt++;
+    }
+    return cnt;
+}`,
+    },
+    {
+      id: 'fib', lvl: 1, title: 'Числа Фибоначчи', fn: 'fib', args: ['int'],
+      desc: `<p>Последовательность Фибоначчи: 0, 1, 1, 2, 3, 5, 8, 13… Каждое число равно сумме двух предыдущих. Верни <code>n</code>-е число (считая с нуля).</p>
+<pre>fib(0) → 0
+fib(10) → 55</pre>`,
+      starter: `long long fib(int n) {
+    return 0;
+}`,
+      tests: [[['0'], '0'], [['1'], '1'], [['2'], '1'], [['10'], '55'], [['50'], '12586269025']],
+      hint: 'Храни два последних числа a = 0, b = 1. n раз делай: next = a + b; a = b; b = next. Ответ в a.',
+      sol: `long long fib(int n) {
+    long long a = 0, b = 1;
+    for (int i = 0; i < n; i++) {
+        long long next = a + b;
+        a = b;
+        b = next;
+    }
+    return a;
+}`,
+    },
+    {
+      id: 'countchar', lvl: 1, title: 'Сколько раз встречается буква', fn: 'countChar', args: ['string', 'char'],
+      desc: `<p>Посчитай, сколько раз символ <code>c</code> встречается в строке <code>s</code>.</p>
+<pre>countChar("banana", 'a') → 3</pre>`,
+      starter: `int countChar(string s, char c) {
+    return 0;
+}`,
+      tests: [[['"hello"', "'l'"], '2'], [['"banana"', "'a'"], '3'], [['""', "'x'"], '0'], [['"C++"', "'+'"], '2'], [['"Mississippi"', "'s'"], '4']],
+      hint: 'Перебери символы: for (char ch : s) { if (ch == c) cnt++; }',
+      sol: `int countChar(string s, char c) {
+    int cnt = 0;
+    for (char ch : s) {
+        if (ch == c) cnt++;
+    }
+    return cnt;
+}`,
+    },
+    {
+      id: 'upper', lvl: 1, title: 'ЗАГЛАВНЫЕ БУКВЫ', fn: 'toUpper', args: ['string'],
+      desc: `<p>Верни строку, где все латинские буквы стали заглавными. Остальные символы не меняются.</p>
+<pre>toUpper("C++ is Fun") → "C++ IS FUN"</pre>`,
+      starter: `string toUpper(string s) {
+    return s;
+}`,
+      tests: [[['"hello"'], '"HELLO"'], [['"C++ is Fun"'], '"C++ IS FUN"'], [['""'], '""'], [['"123abc"'], '"123ABC"']],
+      hint: 'Пройди по индексам: s[i] = toupper(s[i]);',
+      sol: `string toUpper(string s) {
+    for (int i = 0; i < (int)s.size(); i++) {
+        s[i] = toupper(s[i]);
+    }
+    return s;
+}`,
+    },
+    {
+      id: 'repeat', lvl: 1, title: 'Повтор строки', fn: 'repeatStr', args: ['string', 'int'],
+      desc: `<p>Верни строку <code>s</code>, повторённую <code>n</code> раз подряд.</p>
+<pre>repeatStr("ab", 3) → "ababab"</pre>`,
+      starter: `string repeatStr(string s, int n) {
+    string result = "";
+    return result;
+}`,
+      tests: [[['"ab"', '3'], '"ababab"'], [['"x"', '0'], '""'], [['"Hi "', '2'], '"Hi Hi "'], [['"-"', '5'], '"-----"']],
+      hint: 'n раз выполни result += s;',
+      sol: `string repeatStr(string s, int n) {
+    string result = "";
+    for (int i = 0; i < n; i++) result += s;
+    return result;
+}`,
+    },
+    {
+      id: 'arrsum', lvl: 1, title: 'Сумма массива', fn: 'arraySum', args: [VI],
+      desc: `<p>Дан массив чисел <code>nums</code>. Верни сумму всех его элементов. Это первая задача на <code>vector</code>.</p>
+<pre>arraySum([1,2,3]) → 6
+arraySum([]) → 0</pre>`,
+      starter: `int arraySum(vector<int>& nums) {
+    return 0;
+}`,
+      tests: [[['{1,2,3}'], '6'], [['{}'], '0'], [['{-5,5,10}'], '10'], [['{100}'], '100'], [['{1,1,1,1,1,1,1}'], '7']],
+      hint: 'int sum = 0; for (int x : nums) sum += x; return sum;',
+      sol: `int arraySum(vector<int>& nums) {
+    int sum = 0;
+    for (int x : nums) sum += x;
+    return sum;
+}`,
+    },
+    {
+      id: 'arrmax', lvl: 1, title: 'Максимум массива', fn: 'arrayMax', args: [VI],
+      desc: `<p>Верни самый большой элемент массива. Массив не пустой. Числа могут быть отрицательными.</p>
+<pre>arrayMax([3,9,2]) → 9
+arrayMax([-5,-1,-9]) → -1</pre>`,
+      starter: `int arrayMax(vector<int>& nums) {
+    return 0;
+}`,
+      tests: [[['{3,9,2}'], '9'], [['{-5,-1,-9}'], '-1'], [['{7}'], '7'], [['{4,4,4}'], '4'], [['{1,2,3,100,4}'], '100']],
+      hint: 'Начни с best = nums[0] (не с 0: все числа могут быть отрицательными), потом сравни с каждым.',
+      sol: `int arrayMax(vector<int>& nums) {
+    int best = nums[0];
+    for (int x : nums) {
+        if (x > best) best = x;
+    }
+    return best;
+}`,
+    },
+    {
+      id: 'counteven', lvl: 1, title: 'Сколько чётных', fn: 'countEven', args: [VI],
+      desc: `<p>Посчитай, сколько в массиве чётных чисел.</p>
+<pre>countEven([1,2,3,4]) → 2</pre>`,
+      starter: `int countEven(vector<int>& nums) {
+    return 0;
+}`,
+      tests: [[['{1,2,3,4}'], '2'], [['{}'], '0'], [['{0,-2,7}'], '2'], [['{1,3,5}'], '0'], [['{2,4,6,8}'], '4']],
+      hint: 'Перебери числа, проверяй x % 2 == 0.',
+      sol: `int countEven(vector<int>& nums) {
+    int cnt = 0;
+    for (int x : nums) {
+        if (x % 2 == 0) cnt++;
+    }
+    return cnt;
+}`,
+    },
+    {
+      id: 'indexof', lvl: 1, title: 'Найти элемент', fn: 'indexOf', args: [VI, 'int'],
+      desc: `<p>Верни индекс первого вхождения числа <code>x</code> в массив или <code>-1</code>, если его нет. Индексы начинаются с 0.</p>
+<pre>indexOf([5,3,8], 8) → 2
+indexOf([5,3,8], 4) → -1</pre>`,
+      starter: `int indexOf(vector<int>& nums, int x) {
+    return -1;
+}`,
+      tests: [[['{5,3,8}', '8'], '2'], [['{5,3,8}', '4'], '-1'], [['{1,1,1}', '1'], '0'], [['{}', '1'], '-1'], [['{9,8,7,6}', '6'], '3']],
+      hint: 'Цикл по индексам i от 0 до nums.size(). Как только nums[i] == x, сразу return i. После цикла return -1.',
+      sol: `int indexOf(vector<int>& nums, int x) {
+    for (int i = 0; i < (int)nums.size(); i++) {
+        if (nums[i] == x) return i;
+    }
+    return -1;
+}`,
+    },
+    {
+      id: 'revarr', lvl: 1, title: 'Перевернуть массив', fn: 'reverseArray', args: [VI],
+      desc: `<p>Верни новый массив с элементами в обратном порядке.</p>
+<pre>reverseArray([1,2,3]) → [3,2,1]</pre>`,
+      starter: `vector<int> reverseArray(vector<int>& nums) {
+    vector<int> result;
+    return result;
+}`,
+      tests: [[['{1,2,3}'], '{3,2,1}'], [['{}'], '{}'], [['{5}'], '{5}'], [['{1,2,3,4}'], '{4,3,2,1}']],
+      hint: 'Иди с конца: for (int i = nums.size() - 1; i >= 0; i--) result.push_back(nums[i]);',
+      sol: `vector<int> reverseArray(vector<int>& nums) {
+    vector<int> result;
+    for (int i = (int)nums.size() - 1; i >= 0; i--) {
+        result.push_back(nums[i]);
+    }
+    return result;
+}`,
+    },
+    {
+      id: 'multiples', lvl: 1, title: 'Таблица умножения', fn: 'multiples', args: ['int', 'int'],
+      desc: `<p>Верни массив из первых <code>n</code> чисел, кратных <code>x</code>: x, 2x, 3x…</p>
+<pre>multiples(3, 4) → [3,6,9,12]</pre>`,
+      starter: `vector<int> multiples(int x, int n) {
+    vector<int> result;
+    return result;
+}`,
+      tests: [[['3', '4'], '{3,6,9,12}'], [['5', '1'], '{5}'], [['7', '0'], '{}'], [['-2', '3'], '{-2,-4,-6}'], [['1', '5'], '{1,2,3,4,5}']],
+      hint: 'for (int i = 1; i <= n; i++) result.push_back(x * i);',
+      sol: `vector<int> multiples(int x, int n) {
+    vector<int> result;
+    for (int i = 1; i <= n; i++) result.push_back(x * i);
+    return result;
+}`,
+    },
   ];
+
+  // Порядок задач: сначала основы, потом разминка, дальше как было
+  const ORDER = ["sum", "square", "minutes", "lastdigit", "average", "celsius", "absval", "max3", "even", "sign", "grade", "leap", "sumto", "fact", "power", "divisors", "digits", "fib", "prime", "countchar", "revstr", "upper", "vowels", "palin", "repeat", "arrsum", "arrmax", "counteven", "indexof", "revarr", "multiples", "fizz"];
+  P.sort((a, b) => {
+    const ia = ORDER.indexOf(a.id), ib = ORDER.indexOf(b.id);
+    if (a.lvl !== b.lvl) return a.lvl - b.lvl;
+    return (ia < 0 ? 1e9 : ia) - (ib < 0 ? 1e9 : ib);
+  });
 
   const api = { PROBLEMS: P, LEVELS };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
